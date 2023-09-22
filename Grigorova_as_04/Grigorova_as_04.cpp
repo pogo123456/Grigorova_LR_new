@@ -1,8 +1,8 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <Windows.h>
 
-//using namespace std;
 using namespace std;
 
 struct pipe
@@ -18,7 +18,7 @@ struct station
 	string title = "";
 	int workshop = 0;
 	int active_workshop = 0;
-	char efficiency = 'A';
+	string efficiency = "A";
 };
 
 void InputInt(int& var)
@@ -28,7 +28,7 @@ void InputInt(int& var)
 	{
 		cin.clear();
 		cin.ignore(1000, '\n');
-		cout << "Try again: ";
+		cout << "Некорректно введенные данные! Попробуйте снова:  ";
 		cin >> var;
 	}
 }
@@ -40,7 +40,7 @@ void InputDouble(double& var)
 	{
 		cin.clear();
 		cin.ignore(1000, '\n');
-		cout << "Try again: ";
+		cout << "Некорректно введенные данные! Попробуйте снова:  ";
 		cin >> var;
 	}
 }
@@ -48,11 +48,11 @@ void InputDouble(double& var)
 void InputBool(bool& var)
 {
 	cin >> var;
-	while (cin.fail())
+	while (cin.fail() || cin.peek() != '\n')
 	{
 		cin.clear();
 		cin.ignore(1000, '\n');
-		cout << "Try again: ";
+		cout << "Некорректно введенные данные! Попробуйте снова:  ";
 		cin >> var;
 	}
 }
@@ -60,14 +60,14 @@ void InputBool(bool& var)
 pipe AddPipe()
 {
 	pipe new_pipe;
-	cout << "Please, enter kilometer mark:  ";
+	cout << "Введите километровую отметку:  ";
 	cin.ignore();
 	getline(cin, new_pipe.km_mark);
-	cout << "Please, enter pipe length(km):  ";
+	cout << "Введите длину трубы (км):  ";
 	InputDouble(new_pipe.len);
-	cout << "Please, enter pipe diameter(mm):  ";
+	cout << "Введите диаметр трубы (мм):  ";
 	InputInt(new_pipe.diam);
-	cout << "Please, enter pipe inrepair? (1-yes, 0-no):  ";
+	cout << "Состояние трубы (1 - в ремонте; 0 - работает):  ";
 	InputBool(new_pipe.inrepair);
 
 	return new_pipe;
@@ -76,23 +76,23 @@ pipe AddPipe()
 station AddStation()
 {
 	station new_station;
-	cout << "Please, enter station name:  ";
+	cout << "Введите название станции:  ";
 	cin.ignore();
 	getline(cin, new_station.title);
-	cout << "Please, enter number of workshops:  ";
+	cout << "Введите кол-во цехов:  ";
 	InputInt(new_station.workshop);
-	cout << "Please, enter number of active workshops:  ";
+	cout << "Введите кол-во работающих цехов:  ";
 	InputInt(new_station.active_workshop);
 	while (new_station.workshop < new_station.active_workshop)
 	{
-		cout << "Error! Quantity exceeded" << endl << "Enter correct data: " << endl;
+		cout << "Ошибка! Превышено кол-во работающих цехов!" << endl << "Введите корректные данные:  ";
 		InputInt(new_station.active_workshop);
 	}
-	cout << "Please, enter efficiency from A to G:  ";
+	cout << "Введите эффективность станции от A до G:  ";
 	cin >> new_station.efficiency;
-	while (!(new_station.efficiency >= 'A' && new_station.efficiency <= 'G'))
+	while (!(new_station.efficiency >= "A" && new_station.efficiency <= "G" && new_station.efficiency.length() == 1))
 	{
-		cout << "Error! Enter correct data: " << endl;
+		cout << "Ошибка! Введите корректные данные:  ";
 		cin >> new_station.efficiency;
 	}
 
@@ -102,29 +102,26 @@ station AddStation()
 void ShowPipe(const pipe& new_pipe)
 {
 	if (new_pipe.len == 0)
-		cout << "No pipe." << endl;
+		cout << "Нет трубы." << endl;
 	else
 	{
-		cout << "Pipe length: " << new_pipe.len << endl;
-		cout << "Pipe diameter: " << new_pipe.diam << endl;
-		cout << "Kilometer mark: " << new_pipe.km_mark << endl;
-		if (new_pipe.inrepair)//?????????
-			cout << "Pipe under repair." << endl;
-		else
-			cout << "The pipe is working." << endl;
+		cout << "Километровая отметка:  " << new_pipe.km_mark << endl;
+		cout << "Длина трубы:  " << new_pipe.len << endl;
+		cout << "Диаметр трубы:  " << new_pipe.diam << endl;
+		(new_pipe.inrepair) ? cout << "Труба в ремонте." << endl << endl : cout << "Труба работает." << endl;
 	}
 }
 
 void ShowStation(const station& new_station)
 {
 	if (new_station.workshop == 0)
-		cout << "No station." << endl;
+		cout << "Нет станции." << endl;
 	else
 	{
-		cout << "Station name: " << new_station.title << endl;
-		cout << "Number of workshops: " << new_station.workshop << endl;
-		cout << "Number of active workshops: " << new_station.active_workshop << endl;
-		cout << "Effectiveness: " << new_station.efficiency << endl;
+		cout << "Название станции:  " << new_station.title << endl;
+		cout << "Кол-во цехов:  " << new_station.workshop << endl;
+		cout << "Кол-во работающих цехов:  " << new_station.active_workshop << endl;
+		cout << "Эффективность:  " << new_station.efficiency << endl;
 	}
 }
 
@@ -132,44 +129,44 @@ void EditPipe(pipe& edit_pipe)
 {
 	int choice = 0;
 	if (edit_pipe.len == 0)
-		cout << "No pipe" << endl;
+		cout << "Нет трубы." << endl;
 	else
 	{
 		if (edit_pipe.inrepair)
 		{
-			cout << "Pipe under repair. Want to fix it?" << endl;
-			cout << "1. Yes" << endl << "2. No" << endl << "Your choice: ";
+			cout << "Труба в ремонте. Изменить статус?" << endl;
+			cout << "1. Да" << endl << "2. Нет" << endl << "Ваш выбор: ";
 			InputInt(choice);
 			switch (choice)
 			{
 			case 1:
 				edit_pipe.inrepair = false;
-				cout << "Now the pipe is working." << endl;
+				cout << "Сейчас труба работает." << endl;
 				break;
 			case 2:
 				return;
 				break;
 			default:
-				cout << "Error! Enter correct data: " << endl;
+				cout << "Ошибка! Введите корректные данные:  ";
 				break;
 			}
 		}
 		else
 		{
-			cout << "The pipe is working. Want to fix it?" << endl;
-			cout << "1. Yes" << endl << "2. No" << endl << "Your choice: ";
+			cout << "Труба работает. Изменить статус?" << endl;
+			cout << "1. Да" << endl << "2. Нет" << endl << "Ваш выбор: ";
 			InputInt(choice);
 			switch (choice)
 			{
 			case 1:
 				edit_pipe.inrepair = true;
-				cout << "Now pipe under repair." << endl;
+				cout << "Сейчас труба в ремонте." << endl;
 				break;
 			case 2:
 				return;
 				break;
 			default:
-				cout << "Error! Enter correct data: " << endl;
+				cout << "Ошибка! Введите корректные данные:  ";
 				break;
 			}
 		}
@@ -180,21 +177,21 @@ void EditStation(station& edit_station)
 {
 	int choice = 0;
 	if (edit_station.workshop == 0)
-		cout << "No station." << endl;
+		cout << "Нет станции." << endl;
 	else
 	{
-		cout << "Want to fix number?" << endl;
-		cout << "1. Yes" << endl << "2. No" << endl << "Your choice: ";
+		cout << "Хотите изменить кол-во работающих цехов?" << endl;
+		cout << "1. Да" << endl << "2. Нет" << endl << "Ваш выбор: ";
 		InputInt(choice);
 		switch (choice)
 		{
 		case 1:
-			cout << "Please, enter number of active workshops: ";
+			cout << "Введите новое кол-во работающих цехов:  ";
 			InputInt(edit_station.active_workshop);
 			while (edit_station.active_workshop > edit_station.workshop)
 			{
-				cout << "Erorr! Quantity exceeded." << endl << "Number of workshops: " << edit_station.workshop << endl;
-				cout << "Enter correct data: ";
+				cout << "Ошибка! Превышено кол-во работающих цехов!" << endl << "Кол-во всех цехов:  " << edit_station.workshop << endl;
+				cout << "Введите корректные данные:  ";
 				InputInt(edit_station.active_workshop);
 			}
 			break;
@@ -202,123 +199,158 @@ void EditStation(station& edit_station)
 			return;
 			break;
 		default:
-			cout << "Error!Enter correct data: " << endl;
+			cout << "Ошибка! Введите корректные данные:  ";
 			break;
 		}
 	}
 }
 
-//void Save()
-//{
-//	ofstream out;
-//	out.open("datas.txt"); 
-//	if (out.is_open())
-//	{
-//		for (const pipe& pipe)
-//		{
-//			out << "Kilometer mark : " << pipe.km_mark << endl 
-//				<< "Pipe length: " << pipe.len << endl 
-//				<< "Pipe diameter: " << pipe.diam << endl 
-//				<< "Pipe status: " << pipe.inrepair << endl;
-//		}
-//
-//		for (const station& station)
-//		{
-//			out << "Station name: " << station.title << endl 
-//				<< "Number of workshops: " << station.workshop << endl 
-//				<< "Number of active workshops: " << station.active_workshop << endl 
-//				<< "Effectiveness: " << station.efficiency << endl;
-//		}
-//	}
-//	out.close();
-//	cout << "File has been written" << endl;
-//}
-//
-//void Download()
-//{
-//	string line;
-//
-//	ifstream in("datas.txt");
-//	if (in.is_open())
-//	{
-//		while (getline(in, line))
-//		{
-//			cout << line << endl;
-//		}
-//	}
-//	in.close();
-//	cout << "File has been extracted" << endl;
-//}
+void Save(const pipe& new_pipe, const station& new_station)
+{
+	string path = "";
+	ofstream fout;
+
+	cout << "Введите название файла:  ";
+	cin >> path;
+
+	fout.open(path + ".txt", ofstream::app);
+
+	if (!fout.is_open())
+		cout << "Ошибка открытия файла!" << endl;
+	else
+	{
+		
+		if (new_pipe.len == 0)
+			fout << "Нет трубы." << '\n';
+		else
+		{
+			fout << "Километровая отметка:  " << new_pipe.km_mark << '\n';
+			fout << "Длина трубы:  " << new_pipe.len << '\n';
+			fout << "Диамер трубы:  " << new_pipe.diam << '\n';
+			fout << "Состояние трубы:  " << new_pipe.inrepair << '\n';
+		}
+		fout << "\n";
+		if (new_station.workshop == 0)
+			fout << "Нет станции." << "\n";
+		else
+		{
+			fout << "Название станции:  " << new_station.title << "\n";
+			fout << "Кол-во цехов:  " << new_station.workshop << "\n";
+			fout << "Кол-во работающих цехов:  " << new_station.active_workshop << "\n";
+			fout << "Эффективность:  " << new_station.efficiency << "\n";
+		}
+	}
+
+	fout.close();
+}
+
+void Download()
+{
+	string path = "";
+	ifstream fin;
+
+	cout << "Введите название файла:  ";
+	cin >> path;
+
+	fin.open(path + ".txt");
+
+	if (!fin.is_open())
+	{
+		cout << "Ошибка открытия файла!!" << endl;
+	}
+	else
+	{
+		string str;
+		while (!fin.eof())
+		{
+			str = "";
+			getline(fin, str);
+			cout << str << endl;
+		}
+	}
+
+	fin.close();
+
+}
 
 int main()
 {
 	pipe pipe;
 	station station;
 
+	setlocale(LC_ALL, "ru");
+	SetConsoleCP(1251);
+	SetConsoleOutputCP(1251);
+
 	while (true)
 	{
-		cout << endl << "Menu: " << endl;
-		cout << "1. Add pipe" << endl;
-		cout << "2. Add station" << endl;
-		cout << "3. All object" << endl;
-		cout << "4. Edit pipe" << endl;
-		cout << "5. Edit station" << endl;
-		cout << "6. Save" << endl;
-		cout << "7. Download" << endl;
-		cout << "0. Exit" << endl << endl;
+		cout  << endl << "------------------------------------" << endl;
+		cout << "Меню" << endl;
+		cout << "1. Добавить трубу" << endl;
+		cout << "2. Добавить станцию" << endl;
+		cout << "3. Вывести все объекты" << endl;
+		cout << "4. Редактировать трубу" << endl;
+		cout << "5. Редактировать станцию" << endl;
+		cout << "6. Сохранить" << endl;
+		cout << "7. Загрузить" << endl;
+		cout << "8. Выйти" << endl;
+		cout << "------------------------------------" << endl << endl;
 
-		cout << "Your choice: ";
-		int choice = 0;
+		cout << "Ваш выбор: ";
+		int choice;
 		InputInt(choice);
 
 		switch (choice)
 		{
 		case 1:
 		{
-			cout << "Add pipe" << endl;
+			cout << endl << "<  Добавление трубы  >" << endl << endl;
 			pipe = AddPipe();
 			break;
 		}
 		case 2:
 		{
-			cout << "Add station" << endl;
+			cout << endl << "<  Добавление станции  >" << endl << endl;
 			station = AddStation();
 			break;
 		}
 		case 3:
 		{
-			cout << "All object" << endl;
+			cout << endl <<  "<  Все объекты  >" << endl << endl;
 			ShowPipe(pipe);
 			ShowStation(station);
 			break;
 		}
 		case 4:
 		{
-			cout << "Edit pipe" << endl;
+			cout << endl << "<  Редактирование трубы  >" << endl << endl;
 			EditPipe(pipe);
 			break;
 		}
 		case 5:
 		{
-			cout << "Edit station" << endl;
+			cout << endl << "<  Редактирование станции  >" << endl << endl;
 			EditStation(station);
 			break;
 		}
 		case 6:
 		{
-			cout << "Save";
+			cout << endl << "<  Сохрание  >" << endl << endl;
+			Save(pipe, station);
 			break;
 		}
 		case 7:
 		{
-			cout << "Download";
+			cout << endl << "<  Загрузка  >" << endl << endl;
+			Download();
 			break;
 		}
-		case 0:
+		case 8:
+			cout << endl << "<  Выход  >" << endl << endl;
 			return 0;
 			break;
 		default:
-			cout << "Error!!! Try again." << endl;
+			cout << "Ошибка! Введите снова" << endl;
 			break;
 		}
 	}
