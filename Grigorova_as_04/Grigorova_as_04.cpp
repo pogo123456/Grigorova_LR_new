@@ -244,10 +244,11 @@ void Save(const pipe& new_pipe, const station& new_station)
 	fout.close();
 }
 
-void Download()
+void Download(const pipe& pipe, const station& station)
 {
 	string path = "";
 	ifstream fin;
+	string line;
 
 	cout << "Введите название файла:  ";
 	cin >> path;
@@ -260,17 +261,28 @@ void Download()
 	}
 	else
 	{
-		string str;
-		while (!fin.eof())
+		while (getline(fin, line))
 		{
-			str = "";
-			getline(fin, str);
-			cout << str << endl;
+			if (line == "Километровая отметка : ")
+				fin >> pipe.km_mark;
+			else if (line == "Длина трубы:  ")
+				fin >> pipe.len;
+			else if (line == "Диамер трубы:  ")
+				fin >> pipe.diam;
+			else if (line == "Состояние трубы:  ")
+				fin >> pipe.inrepair;
+			else if (line == "Название станции:  ")
+				fin >> station.title;
+			else if (line == "Кол-во цехов:  ")
+				fin >> station.workshop;
+			else if (line == "Кол-во работающих цехов:  ")
+				fin >> station.active_workshop;
+			else if (line == "Эффективность:  ")
+				fin >> station.efficiency;
 		}
 	}
 
 	fin.close();
-
 }
 
 int main()
@@ -342,7 +354,7 @@ int main()
 		case 7:
 		{
 			cout << endl << "<  Загрузка  >" << endl << endl;
-			Download();
+			Download(pipe, station);
 			break;
 		}
 		case 8:
