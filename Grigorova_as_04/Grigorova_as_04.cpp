@@ -106,8 +106,8 @@ void ShowPipe(const pipe& new_pipe)
 	else
 	{
 		cout << "Километровая отметка:  " << new_pipe.km_mark << endl;
-		cout << "Длина трубы:  " << new_pipe.len << endl;
-		cout << "Диаметр трубы:  " << new_pipe.diam << endl;
+		cout << "Длина трубы:  " << new_pipe.len << "км" << endl;
+		cout << "Диаметр трубы:  " << new_pipe.diam << "мм" << endl;
 		(new_pipe.inrepair) ? cout << "Труба в ремонте." << endl << endl : cout << "Труба работает." << endl;
 	}
 }
@@ -205,7 +205,83 @@ void EditStation(station& edit_station)
 	}
 }
 
-void Save(const pipe& new_pipe, const station& new_station)
+//void Save(pipe& new_pipe, station& new_station)
+//{
+//	string path = "";
+//	ofstream fout;
+//
+//	cout << "Введите название файла:  ";
+//	cin >> path;
+//
+//	fout.open(path + ".txt", ofstream::app);
+//
+//	if (!fout.is_open())
+//		cout << "Ошибка открытия файла!" << endl;
+//	else
+//	{
+//		if (!(new_pipe.len == 0))
+//		{
+//			fout << "Километровая отметка:  " << new_pipe.km_mark << endl;
+//			fout << "Длина трубы:  " << new_pipe.len << endl;
+//			fout << "Диамер трубы:  " << new_pipe.diam << endl;
+//			fout << "Состояние трубы:  " << new_pipe.inrepair << endl;
+//		}
+// 
+//		if (!(new_station.workshop == 0))
+//		{
+//			fout << "Название станции:  " << new_station.title << endl;
+//			fout << "Кол-во цехов:  " << new_station.workshop << endl;
+//			fout << "Кол-во работающих цехов:  " << new_station.active_workshop << endl;
+//			fout << "Эффективность:  " << new_station.efficiency << endl;
+//		}
+//	}
+//
+//	fout.close();
+//}
+//void Download(pipe& pipe, station& station)
+//{
+//	string path = "";
+//	ifstream fin;
+//	string line;
+//
+//	cout << "Введите название файла:  ";
+//	cin >> path;
+//
+//	fin.open(path + ".txt");
+//
+//	if (!fin.is_open())
+//	{
+//		cout << "Ошибка открытия файла!!" << endl;
+//	}
+//	else
+//	{
+//		while (getline(fin, line))
+//		{
+//			if (line == "Километровая отметка:  ")
+//				fin >> pipe.km_mark;
+//			else if (line == "Длина трубы:  ")
+//				fin >> pipe.len;
+//			else if (line == "Диамер трубы:  ")
+//				fin >> pipe.diam;
+//			else if (line == "Состояние трубы:  ")
+//				fin >> pipe.inrepair;
+//			else if (line == "Название станции:  ")
+//				fin >> station.title;
+//			else if (line == "Кол-во цехов:  ")
+//				fin >> station.workshop;
+//			else if (line == "Кол-во работающих цехов:  ")
+//				fin >> station.active_workshop;
+//			else if (line == "Эффективность:  ")
+//				fin >> station.efficiency;
+//		}
+//		ShowPipe(pipe);
+//		ShowStation(station);
+//	}
+//
+//	fin.close();
+//}
+
+void Save(pipe& new_pipe, station& new_station)
 {
 	string path = "";
 	ofstream fout;
@@ -219,70 +295,73 @@ void Save(const pipe& new_pipe, const station& new_station)
 		cout << "Ошибка открытия файла!" << endl;
 	else
 	{
-		
 		if (new_pipe.len == 0)
 			fout << "Нет трубы." << '\n';
 		else
 		{
-			fout << "Километровая отметка:  " << new_pipe.km_mark << '\n';
-			fout << "Длина трубы:  " << new_pipe.len << '\n';
-			fout << "Диамер трубы:  " << new_pipe.diam << '\n';
-			fout << "Состояние трубы:  " << new_pipe.inrepair << '\n';
+			fout << "Сведения о ТРУБЕ: " << endl;
+			fout << new_pipe.km_mark << endl 
+				<< new_pipe.len << endl 
+				<< new_pipe.diam << endl 
+				<< new_pipe.inrepair << endl << endl;
 		}
-		fout << "\n";
+
 		if (new_station.workshop == 0)
 			fout << "Нет станции." << "\n";
 		else
 		{
-			fout << "Название станции:  " << new_station.title << "\n";
-			fout << "Кол-во цехов:  " << new_station.workshop << "\n";
-			fout << "Кол-во работающих цехов:  " << new_station.active_workshop << "\n";
-			fout << "Эффективность:  " << new_station.efficiency << "\n";
+			fout << "Сведения о СТАНЦИИ: " << endl;
+			fout << new_station.title << endl 
+				<< new_station.workshop << endl 
+				<< new_station.active_workshop << endl 
+				<< new_station.efficiency << endl << endl;
 		}
 	}
 
 	fout.close();
 }
 
-void Download(const pipe& pipe, const station& station)
+void Download(pipe& pipe, station& station)
 {
 	string path = "";
 	ifstream fin;
 	string line;
-
+	
 	cout << "Введите название файла:  ";
 	cin >> path;
-
+	
 	fin.open(path + ".txt");
 
-	if (!fin.is_open())
-	{
-		cout << "Ошибка открытия файла!!" << endl;
-	}
-	else
+	if (fin.is_open())
 	{
 		while (getline(fin, line))
 		{
-			if (line == "Километровая отметка : ")
+			if (line == "Сведения о ТРУБЕ: ")
+			{
+				cout << line << endl;
 				fin >> pipe.km_mark;
-			else if (line == "Длина трубы:  ")
 				fin >> pipe.len;
-			else if (line == "Диамер трубы:  ")
 				fin >> pipe.diam;
-			else if (line == "Состояние трубы:  ")
 				fin >> pipe.inrepair;
-			else if (line == "Название станции:  ")
+				ShowPipe(pipe);
+			}
+			else if (line == "Сведения о СТАНЦИИ: ")
+			{
+				cout << line << endl;
 				fin >> station.title;
-			else if (line == "Кол-во цехов:  ")
 				fin >> station.workshop;
-			else if (line == "Кол-во работающих цехов:  ")
 				fin >> station.active_workshop;
-			else if (line == "Эффективность:  ")
 				fin >> station.efficiency;
+				ShowStation(station);
+			}
 		}
-	}
+		if (pipe.km_mark.empty() && station.title.empty())
+			cout << "Данных не существует" << endl;
 
-	fin.close();
+		fin.close();
+	}
+	else
+		cout << "Ошибка открытия файла!" << endl;
 }
 
 int main()
