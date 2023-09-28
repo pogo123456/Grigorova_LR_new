@@ -108,7 +108,7 @@ void ShowPipe(const pipe& new_pipe)
 		cout << "Километровая отметка:  " << new_pipe.km_mark << endl;
 		cout << "Длина трубы:  " << new_pipe.len << "км" << endl;
 		cout << "Диаметр трубы:  " << new_pipe.diam << "мм" << endl;
-		(new_pipe.inrepair) ? cout << "Труба в ремонте." << endl << endl : cout << "Труба работает." << endl;
+		(new_pipe.inrepair) ? cout << "Труба в ремонте." << endl : cout << "Труба работает." << endl;
 	}
 }
 
@@ -127,49 +127,12 @@ void ShowStation(const station& new_station)
 
 void EditPipe(pipe& edit_pipe)
 {
-	int choice = 0;
 	if (edit_pipe.len == 0)
 		cout << "Нет трубы." << endl;
 	else
 	{
-		if (edit_pipe.inrepair)
-		{
-			cout << "Труба в ремонте. Изменить статус?" << endl;
-			cout << "1. Да" << endl << "2. Нет" << endl << "Ваш выбор: ";
-			InputInt(choice);
-			switch (choice)
-			{
-			case 1:
-				edit_pipe.inrepair = false;
-				cout << "Сейчас труба работает." << endl;
-				break;
-			case 2:
-				return;
-				break;
-			default:
-				cout << "Ошибка! Введите корректные данные:  ";
-				break;
-			}
-		}
-		else
-		{
-			cout << "Труба работает. Изменить статус?" << endl;
-			cout << "1. Да" << endl << "2. Нет" << endl << "Ваш выбор: ";
-			InputInt(choice);
-			switch (choice)
-			{
-			case 1:
-				edit_pipe.inrepair = true;
-				cout << "Сейчас труба в ремонте." << endl;
-				break;
-			case 2:
-				return;
-				break;
-			default:
-				cout << "Ошибка! Введите корректные данные:  ";
-				break;
-			}
-		}
+		edit_pipe.inrepair = !edit_pipe.inrepair;
+		cout << "Статус трубы изменен." << endl;
 	}
 }
 
@@ -205,15 +168,11 @@ void EditStation(station& edit_station)
 	}
 }
 
-void Save(pipe& new_pipe, station& new_station)
+void SavePipe(pipe& new_pipe)
 {
-	string path = "";
 	ofstream fout;
 
-	cout << "Введите название файла:  ";
-	cin >> path;
-
-	fout.open(path + ".txt", ofstream::app);
+	fout.open("Данные.txt", ios::app);
 
 	if (!fout.is_open())
 		cout << "Ошибка открытия файла!" << endl;
@@ -230,12 +189,26 @@ void Save(pipe& new_pipe, station& new_station)
 		else
 			cout << "Данных о трубе нет!" << endl;
 
+		fout.close();
+	}
+}
+
+void SaveStation(station& new_station)
+{
+	ofstream fout;
+
+	fout.open("Данные.txt", ios::app);
+
+	if (!fout.is_open())
+		cout << "Ошибка открытия файла!" << endl;
+	else
+	{
 		if (!new_station.title.empty())
 		{
 			fout << "Сведения о СТАНЦИИ: " << endl;
-			fout << new_station.title << endl 
-				<< new_station.workshop << endl 
-				<< new_station.active_workshop << endl 
+			fout << new_station.title << endl
+				<< new_station.workshop << endl
+				<< new_station.active_workshop << endl
 				<< new_station.efficiency << endl;
 		}
 		else
@@ -247,14 +220,10 @@ void Save(pipe& new_pipe, station& new_station)
 
 void Download(pipe& pipe, station& station)
 {
-	string path = "";
 	ifstream fin;
 	string line;
 	
-	cout << "Введите название файла:  ";
-	cin >> path;
-	
-	fin.open(path + ".txt");
+	fin.open("Данные.txt");
 
 	if (fin.is_open())
 	{
@@ -351,7 +320,10 @@ int main()
 		case 6:
 		{
 			cout << endl << "<  Сохрание  >" << endl << endl;
-			Save(pipe, station);
+			SavePipe(pipe);
+			SaveStation(station);
+			if (!pipe.km_mark.empty() || !station.title.empty())
+				cout << "Данные сохранились в файл." << endl;
 			break;
 		}
 		case 7:
