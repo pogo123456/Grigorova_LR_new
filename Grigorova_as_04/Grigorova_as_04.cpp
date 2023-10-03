@@ -168,93 +168,44 @@ void EditStation(station& edit_station)
 	}
 }
 
-void SavePipe(pipe& new_pipe)
+void SavePipe(pipe& new_pipe, ofstream& fout)
 {
-	ofstream fout;
-
-	fout.open("Данные.txt", ios::app);
-
-	if (!fout.is_open())
-		cout << "Ошибка открытия файла!" << endl;
-	else
-	{
-		if (!new_pipe.km_mark.empty())
-		{
-			fout << "Сведения о ТРУБЕ: " << endl;
-			fout << new_pipe.km_mark << endl
-				<< new_pipe.len << endl
-				<< new_pipe.diam << endl
-				<< new_pipe.inrepair << endl;
-		}
-		else
-			cout << "Данных о трубе нет!" << endl;
-
-		fout.close();
-	}
+	fout << new_pipe.km_mark << endl
+		<< new_pipe.len << endl
+		<< new_pipe.diam << endl
+		<< new_pipe.inrepair << endl;
+	cout << "Данные трубы сохранены в файл." << endl;
+	fout.close();
 }
 
-void SaveStation(station& new_station)
+void SaveStation(station& new_station, ofstream& fout)
 {
-	ofstream fout;
-
-	fout.open("Данные.txt", ios::app);
-
-	if (!fout.is_open())
-		cout << "Ошибка открытия файла!" << endl;
-	else
-	{
-		if (!new_station.title.empty())
-		{
-			fout << "Сведения о СТАНЦИИ: " << endl;
-			fout << new_station.title << endl
-				<< new_station.workshop << endl
-				<< new_station.active_workshop << endl
-				<< new_station.efficiency << endl;
-		}
-		else
-			cout << "Данных о станции нет!" << endl;
-
-		fout.close();
-	}
+	fout << new_station.title << endl
+		<< new_station.workshop << endl
+		<< new_station.active_workshop << endl
+		<< new_station.efficiency << endl;
+	cout << "Данные станции сохранены в файл." << endl;
+	fout.close();
 }
 
-void Download(pipe& pipe, station& station)
+void DownloadPipe(pipe& pipe, ifstream& fin)
 {
-	ifstream fin;
-	string line;
-	
-	fin.open("Данные.txt");
+	fin.ignore();
+	getline(fin, pipe.km_mark);
+	fin >> pipe.len;
+	fin >> pipe.diam;
+	fin >> pipe.inrepair;
+	cout << "Данные трубы загружены из файла." << endl;
+}
 
-	if (fin.is_open())
-	{
-		while (getline(fin, line))
-		{
-			if (line == "Сведения о ТРУБЕ: ")
-			{
-				cout << line << endl;
-				fin >> pipe.km_mark;
-				fin >> pipe.len;
-				fin >> pipe.diam;
-				fin >> pipe.inrepair;
-				ShowPipe(pipe);
-			}
-			else if (line == "Сведения о СТАНЦИИ: ")
-			{
-				cout << line << endl;
-				fin >> station.title;
-				fin >> station.workshop;
-				fin >> station.active_workshop;
-				fin >> station.efficiency;
-				ShowStation(station);
-			}
-		}
-		if (pipe.km_mark.empty() && station.title.empty())
-			cout << "Данных не существует" << endl;
-
-		fin.close();
-	}
-	else
-		cout << "Ошибка открытия файла!" << endl;
+void DownloadStation(station& station, ifstream& fin)
+{
+	fin.ignore();
+	getline(fin, station.title);
+	fin >> station.workshop;
+	fin >> station.active_workshop;
+	fin >> station.efficiency;
+	cout << "Данные станции загружены из файла." << endl;
 }
 
 int main()
@@ -320,16 +271,64 @@ int main()
 		case 6:
 		{
 			cout << endl << "<  Сохрание  >" << endl << endl;
-			SavePipe(pipe);
-			SaveStation(station);
-			if (!pipe.km_mark.empty() || !station.title.empty())
-				cout << "Данные сохранились в файл." << endl;
+			ofstream fout;
+			string fname;
+			cout << "Введите имя файла:  ";
+			cin.ignore();
+			getline(cin, fname);
+			fout.open(fname);
+
+			if (!fout.is_open())
+				cout << "Ошибка открытия файла!" << endl;
+			else
+			{
+				if (pipe.len == 0)
+					fout << 0 << endl;
+				else
+				{
+					fout << 1 << endl;
+					SavePipe(pipe, fout);
+				}
+				if (station.workshop == 0)
+					fout << 0 << endl;
+				else
+				{
+					fout << 1 << endl;
+					SaveStation(station, fout);
+				}
+				
+				fout.close();
+			}
 			break;
 		}
 		case 7:
 		{
 			cout << endl << "<  Загрузка  >" << endl << endl;
-			Download(pipe, station);
+			ifstream fin;
+			string fname;
+			cout << "Введите имя файла:  ";
+			cin.ignore();
+			getline(cin, fname);
+			fin.open(fname);
+			int number;
+
+			if (!fin.is_open())
+				cout << "Ошибка открытия файла!" << endl;
+				
+			else
+			{
+				fin >> number;
+				if (number == 1)
+					DownloadPipe(pipe, fin);
+				else
+					cout << "Нет трубы." << endl;
+				fin >> number;
+				if (number == 1)
+					DownloadStation(station, fin);
+				else
+					cout << "Нет станции." << endl;
+				fin.close();
+			}
 			break;
 		}
 		case 8:
