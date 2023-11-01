@@ -4,10 +4,17 @@
 #include <string>
 #include "Header.h"
 
-int Pipe::max_id = 1;
+int Pipe::max_id_p = 1;
+
+int Pipe::GetId()
+{
+	return ID;
+}
 
 istream& operator >> (istream& in, Pipe& new_pipe)
 {
+	new_pipe.ID = ++new_pipe.max_id_p;
+	cout << "Трубе присвоен ID:  " << new_pipe.ID << endl;
 	cout << "Введите километровую отметку:  ";
 	in.ignore();
 	getline(in, new_pipe.km_mark);
@@ -16,7 +23,7 @@ istream& operator >> (istream& in, Pipe& new_pipe)
 	cout << "Введите диаметр трубы (мм):  ";
 	GetCorrectNumber(new_pipe.diam);
 	cout << "Состояние трубы (1 - в ремонте; 0 - работает):  ";
-	new_pipe.inrepair = GetCorrectNumber(new_pipe.inrepair);
+	GetCorrectNumber(new_pipe.inrepair);
 	cout << new_pipe.OutputStatus();
 	cout << "Введите ID трубы:  ";
 	GetCorrectNumber(new_pipe.ID);
@@ -24,7 +31,7 @@ istream& operator >> (istream& in, Pipe& new_pipe)
 	return in;
 }
 
-ostream& operator<<(ostream& out, Pipe& new_pipe)
+ostream& operator << (ostream& out, Pipe& new_pipe)
 {
 	if (new_pipe.len == 0)
 		out << "Нет трубы." << endl;
@@ -39,20 +46,56 @@ ostream& operator<<(ostream& out, Pipe& new_pipe)
 	return out;
 }
 
+void EditPipe(Pipe& edit_pipe)
+{
+	int choice = 0;
+	if (edit_pipe.len == 0)
+		cout << "Нет трубы." << endl;
+	else
+	{
+		cout << "Хотите изменить статус трубы?" << endl;
+		cout << "1. Да" << endl << "2. Нет" << endl << "Ваш выбор: ";
+		GetCorrectNumber(choice);
+		switch (choice)
+		{
+		case 1:
+			edit_pipe.inrepair = !edit_pipe.inrepair;
+			cout << "Статус трубы изменен." << endl;
+			break;
+		case 2:
+			return;
+			break;
+		default:
+			cout << "Ошибка! Введите корректные данные:  ";
+			break;
+		}
+	}
+}
+
 string Pipe::OutputStatus()
 {
 	return (inrepair ? "Труба в ремонте." : "Труба работает.");
 }
 
-void Pipe::EditPipe()
+ofstream& operator << (ofstream& fout, const Pipe& pipe)
 {
-
+	fout << pipe.km_mark << endl
+		<< pipe.len << endl
+		<< pipe.diam << endl
+		<< pipe.inrepair << endl
+		<< pipe.ID << endl;
+	cout << "Данные трубы сохранены в файл." << endl;
+	return fout;
 }
 
-void Pipe::Savepipe(ofstream& file)
+ifstream& operator >> (ifstream& fin, Pipe& pipe)
 {
-}
-
-void Pipe::DownloadPipe(ifstream& file)
-{
+	fin.ignore();
+	getline(fin, pipe.km_mark);
+	fin >> pipe.len;
+	fin >> pipe.diam;
+	fin >> pipe.inrepair;
+	fin >> pipe.ID;
+	cout << "Данные трубы загружены из файла." << endl;
+	return fin;
 }
