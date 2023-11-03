@@ -3,8 +3,14 @@
 #include <fstream>
 #include <string>
 #include "Header.h"
+#include <unordered_map>
 
-int Pipe::max_id_p = 1;
+int Pipe::max_id_p = 0;
+
+string Pipe::GetName() const
+{
+	return km_mark;
+}
 
 int Pipe::GetId()
 {
@@ -24,9 +30,7 @@ istream& operator >> (istream& in, Pipe& new_pipe)
 	GetCorrectNumber(new_pipe.diam);
 	cout << "Состояние трубы (1 - в ремонте; 0 - работает):  ";
 	GetCorrectNumber(new_pipe.inrepair);
-	cout << new_pipe.OutputStatus();
-	cout << "Введите ID трубы:  ";
-	GetCorrectNumber(new_pipe.ID);
+	new_pipe.OutputPipeStatus();
 
 	return in;
 }
@@ -41,7 +45,8 @@ ostream& operator << (ostream& out, Pipe& new_pipe)
 		out << "Длина трубы:  " << new_pipe.len << "км" << endl;
 		out << "Диаметр трубы:  " << new_pipe.diam << "мм" << endl;
 		out << "ID трубы:  " << new_pipe.ID << endl;
-		out << "Статус трубы:  " << new_pipe.OutputStatus();
+		out << "Статус трубы:  ";
+		new_pipe.OutputPipeStatus();
 	}
 	return out;
 }
@@ -72,9 +77,43 @@ void EditPipe(Pipe& edit_pipe)
 	}
 }
 
-string Pipe::OutputStatus()
+void EditPipes(vector <Pipe*>& edit_pipes)
 {
-	return (inrepair ? "Труба в ремонте." : "Труба работает.");
+	cout << endl << "Хотите изменить статус трубы?" << endl;
+	cout << "1. Да" << endl << "2. Нет" << endl << "Ваш выбор: ";
+	int choice = 0;
+	GetCorrectNumber(choice);
+	switch (choice)
+	{
+	case 1:
+		bool inrepaire = 0;
+		cout << "Труба в ремонте? (1 - Да, 0 - Нет) ";
+		GetCorrectNumber(inrepaire);
+
+		for (auto& pipe : edit_pipes)
+		{
+			pipe->inrepair = inrepaire;
+			cout << "ID: " << pipe->ID << " - ";
+			pipe->OutputPipeStatus();
+		}
+		break;
+	case 2:
+		return;
+	default:
+		cout << "Ошибка! Введите корректные данные:  " << endl;
+		break;
+	}
+}
+
+
+void Pipe::OutputPipeStatus()
+{
+	cout << (inrepair ? "Труба в ремонте." : "Труба работает.") << endl;
+}
+
+bool Pipe::GetStatus()
+{
+	return inrepair;
 }
 
 ofstream& operator << (ofstream& fout, const Pipe& pipe)

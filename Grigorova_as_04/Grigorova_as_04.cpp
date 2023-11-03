@@ -7,20 +7,125 @@
 #include "Header.h"
 #include <unordered_map>
 #include <unordered_set>
+#include "Pipe.cpp"
+#include "Station.cpp"
+#include <vector>
 
 using namespace std;
 
-template <typename T>
-T& SelectElements(unordered_map<int>, T>& elements)
+unordered_map <int, Pipe> pipes;
+unordered_map <int, Station> stations;
+
+bool check_p_name(Pipe& p, string km_mark)
 {
-	return 0;
+	return (p.GetName().find(km_mark) != string::npos);
+}
+
+bool check_p_status(Pipe& p, bool status) 
+{
+	return (p.GetStatus() == status);
+}
+
+bool check_s_name(Station& s, string title) 
+{
+	return (s.GetName().find(title) != string::npos);
+}
+
+bool check_s_unworking(Station& s, double pers) 
+{
+	return (s.GetPercentOfActiveWorkshops() >= pers);
+}
+
+unordered_set <int> search_p(unordered_map <int, Pipe>& pipes) 
+{
+	int choice = 0;
+	unordered_set <int> id;
+	cout << "Искать трубу по:" << endl;
+	cout << "1. Название" << endl;
+	cout << "2. Статус" << endl;
+	cout << "Ваш выбор";
+	GetCorrectNumber(choice);
+	if (choice == 1) 
+	{
+		string km_mark;
+		cout << "Введите название трубы: ";
+		cin.clear();
+		cin.ignore(INT_MAX, '\n');
+		getline(cin, km_mark);
+		id = search_p_by_parametr(pipes, check_p_name, km_mark);
+	}
+	else 
+	{
+		bool k;
+		cout << "Введите статус трубы (1 - в ремонте; 0 - работает): ";
+		GetCorrectNumber(k);
+		id = search_p_by_parametr(pipes, check_p_status, k);
+	}
+	return id;
+}
+
+unordered_set<int> search_s(unordered_map <int, Station>& stations) 
+{
+	int choice;
+	unordered_set <int> id;
+	cout << "Искать станцию по:" << endl;
+	cout << "1. Название" << endl;
+	cout << "2. Процент использованных цехов" << endl;
+	cout << "Ваш выбор";
+	GetCorrectNumber(choice);
+	if (choice == 1) 
+	{
+		string title;
+		cout << "Введите название станции: ";
+		cin.clear();
+		cin.ignore(INT_MAX, '\n');
+		getline(cin, title);
+		id = search_s_by_parametr(stations, check_s_name, title);
+
+	}
+	else 
+	{
+		double k;
+		cout << "Введите процент использованных цехов: ";
+		GetCorrectNumber(k);
+		id = search_s_by_parametr(stations, check_s_unworking, k);
+	}
+	return id;
+}
+
+void SearchPipes() 
+{
+	if (pipes.size() != 0) {
+		auto x = search_p(pipes);
+		if (x.size() != 0) {
+			for (auto& i : x)
+				cout << pipes[i] << endl;
+		}
+		else
+			cout << "Не существует такой трубы." << endl;
+	}
+	else
+		cout << "Трубы не нашлось." << endl;
+}
+
+void SearchStation() 
+{
+	vector <int> x;
+	if (stations.size() != 0) {
+		auto x = search_s(stations);
+		if (x.size() != 0) {
+			for (auto& i : x)
+				cout << stations[i] << endl;
+		}
+		else
+			cout << "Не существует такой станции.";
+	}
+	else
+		cout << "Станции не нашлось." << endl;
 }
 
 int main()
 {
-	unordered_map <int, Pipe> pipes = {};
-	unordered_map <int, Station> stations = {};
-
 	setlocale(LC_ALL, "ru");
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
@@ -36,7 +141,9 @@ int main()
 		cout << "5. Редактировать станцию" << endl;
 		cout << "6. Сохранить" << endl;
 		cout << "7. Загрузить" << endl;
-		cout << "8. Выйти" << endl;
+		cout << "8. Найти трубу" << endl;
+		cout << "9. Найти станцию" << endl;
+		cout << "0. Выйти" << endl;
 		cout << "------------------------------------" << endl << endl;
 
 		cout << "Ваш выбор: ";
@@ -81,14 +188,14 @@ int main()
 		case 4:
 		{
 			cout << endl << "<  Редактирование трубы  >" << endl << endl;
-			Pipe pipe = SelectElements(pipes);
+			Pipe pipe = SelectElement(pipes);
 			EditPipe(pipe);
 			break;
 		}
 		case 5:
 		{
 			cout << endl << "<  Редактирование станции  >" << endl << endl;
-			Station station = SelectElements(stations);
+			Station station = SelectElement(stations);
 			EditStation(station);
 			break;
 		}
@@ -109,6 +216,7 @@ int main()
 				fout << pipes.size() << endl;
 				for (const auto& pair : pipes)
 					fout << pair.second;
+
 				fout << stations.size() << endl;
 				for (const auto& pair : stations)
 					fout << pair.second;
@@ -126,7 +234,7 @@ int main()
 			cin.ignore();
 			getline(cin, fname);
 			fin.open(fname+".txt");
-			int number;
+			int number = 0;
 
 			if (!fin.is_open())
 				cout << "Ошибка открытия файла!" << endl;
@@ -145,7 +253,7 @@ int main()
 
 				int sizeStation = 0;
 				if (sizeStation == 0)
-					cout << "" << endl;
+					cout << "Станции нет." << endl;
 				while (sizeStation-- > 0)
 				{
 					Station station;
@@ -158,6 +266,18 @@ int main()
 			break;
 		}
 		case 8:
+		{
+			cout << endl << "<  Найти трубу  >" << endl << endl;
+			/*SearchPipes();*/
+			break;
+		}
+		case 9:
+		{
+			cout << endl << "<  Найти станцию  >" << endl << endl;
+			/*SearchStation();*/
+			break;
+		}
+		case 0:
 			cout << endl << "<  Выход  >" << endl << endl;
 			return 0;
 			break;

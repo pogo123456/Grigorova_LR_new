@@ -129,10 +129,12 @@
   <ItemGroup>
     <ClCompile Include="Grigorova_as_04.cpp" />
     <ClCompile Include="Pipe.cpp" />
+    <ClCompile Include="Station.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header.h" />
     <ClInclude Include="Pipe.h" />
+    <ClInclude Include="Station.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

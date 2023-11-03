@@ -17,11 +17,14 @@ class Pipe
 	int diam = 0;
 	int ID = 0;
 public:
-	string OutputStatus();
+	bool GetStatus();
+	void OutputPipeStatus();
 	friend istream& operator >> (istream& in, Pipe& pipe);
 	friend ostream& operator << (ostream& out, Pipe& pipe);
 	friend void EditPipe(Pipe& edit_pipe);
+	friend void EditPipes(vector <Pipe*>& edit_pipes);
 	int GetId();
+	string GetName() const;
 	friend ofstream& operator << (ofstream& fout, const Pipe& pipe);
 	friend ifstream& operator >> (ifstream& fin, Pipe& pipe);
 };
