@@ -1,9 +1,8 @@
 #pragma once
 #include <string>
 #include <iostream>
-#include <unordered_map>
-#include <unordered_set>
 #include <fstream>
+#include <vector>
 
 using namespace std;
 
@@ -20,7 +19,7 @@ public:
 	bool GetStatus();
 	void OutputPipeStatus();
 	friend istream& operator >> (istream& in, Pipe& pipe);
-	friend ostream& operator << (ostream& out, Pipe& pipe);
+	friend ostream& operator << (ostream& out, const Pipe& pipe);
 	friend void EditPipe(Pipe& edit_pipe);
 	friend void EditPipes(vector <Pipe*>& edit_pipes);
 	int GetId();

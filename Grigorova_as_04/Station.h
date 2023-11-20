@@ -23,7 +23,7 @@ public:
 	friend ofstream& operator << (ofstream& fout, const Station& station);
 	friend ifstream& operator >> (ifstream& fin, Station& Station);
 	void OutputWorkshopStatus() const;
-	int GetPercentOfActiveWorkshops() const;
+	double GetPercentOfActiveWorkshops() const;
 	int GetId();
 	string GetName() const;
 };

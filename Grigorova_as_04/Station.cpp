@@ -1,21 +1,17 @@
 #include "Station.h"
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <vector>
 #include "Header.h"
-#include <unordered_map>
+
 
 int Station::max_id_s = 0;
 
 void Station::OutputWorkshopStatus() const
 {
-	cout << "Из " << workshop << " цехов - активных " << active_workshop << " (" << GetPercentOfActiveWorkshops() << " %) " << endl;
+	cout << "Из " << workshop << " цехов активных - " << active_workshop << " (" << GetPercentOfActiveWorkshops() << " %) " << endl;
 }
 
-int Station::GetPercentOfActiveWorkshops() const
+double Station::GetPercentOfActiveWorkshops() const
 {
-	return (active_workshop / workshop) * 100;
+	return active_workshop * 100 / workshop;
 }
 
 int Station::GetId()
@@ -60,47 +56,45 @@ ostream& operator << (ostream& out, const Station& new_station)
 		out << "Нет станции." << endl;
 	else
 	{
+		out << "ID станции:  " << new_station.ID << endl;
 		out << "Название станции:  " << new_station.title << endl;
 		out << "Кол-во цехов:  " << new_station.workshop << endl;
 		out << "Кол-во работающих цехов:  " << new_station.active_workshop << endl;
-		new_station.GetPercentOfActiveWorkshops();
+		new_station.OutputWorkshopStatus();
 		out << "Эффективность:  " << new_station.efficiency << endl;
-		out << "ID станции:  " << new_station.ID << endl;
 	}
 	return out;
 }
 
 void EditStation(Station& edit_station)
 {
+	cout << "Хотите изменить кол-во работающих цехов?" << endl;
+	cout << "1. Да" << endl << "2. Нет" << endl << "Ваш выбор:  ";
 	int choice = 0;
-	if (edit_station.workshop == 0)
-		cout << "Нет станции." << endl;
-	else
+	GetCorrectNumber(choice);
+	switch (choice)
 	{
-		cout << "Хотите изменить кол-во работающих цехов?" << endl;
-		cout << "1. Да" << endl << "2. Нет" << endl << "Ваш выбор: ";
-		GetCorrectNumber(choice);
-		switch (choice)
+	case 1:
+		cout << "Кол-во всех цехов:  " << edit_station.workshop << endl << "Введите новое кол-во работающих цехов:  ";
+		GetCorrectNumber(edit_station.active_workshop);
+		while (edit_station.active_workshop > edit_station.workshop)
 		{
-		case 1:
-			cout << "Введите новое кол-во работающих цехов:  ";
+			cout << "Ошибка! Превышено кол-во работающих цехов!" << endl << "Кол-во всех цехов:  " << edit_station.workshop << endl;
+			cout << "Введите корректные данные:  ";
 			GetCorrectNumber(edit_station.active_workshop);
-			while (edit_station.active_workshop > edit_station.workshop)
-			{
-				cout << "Ошибка! Превышено кол-во работающих цехов!" << endl << "Кол-во всех цехов:  " << edit_station.workshop << endl;
-				cout << "Введите корректные данные:  ";
-				GetCorrectNumber(edit_station.active_workshop);
-			}
-			break;
-		case 2:
-			return;
-			break;
-		default:
-			cout << "Ошибка! Введите корректные данные:  ";
-			break;
 		}
+			cout << endl << "ID: " << edit_station.ID << " - ";
+		edit_station.OutputWorkshopStatus();
+		break;
+	case 2:
+		return;
+		break;
+	default:
+		cout << "Ошибка! Введите корректные данные:  ";
+		break;
 	}
 }
+
 
 void EditStations(vector<Station*>& edit_stations)
 {
@@ -111,14 +105,15 @@ void EditStations(vector<Station*>& edit_stations)
 	switch (choice)
 	{
 	case 1:
-		cout << "Введите процент активных цехов (0-100): ";
-		float percent = 0;
-		GetCorrectNumber(choice);
-		for (auto& compressorStation : edit_stations)
+		cout << "Введите новый процент активных цехов (0-100): ";
+		float percent;
+		GetCorrectNumber(percent);
+
+		for (auto& cs : edit_stations)
 		{
-			compressorStation->active_workshop = round(compressorStation->workshop * percent / 100);
-			cout << "ID: " << compressorStation->ID << " - ";
-			compressorStation->OutputWorkshopStatus();
+			cs->active_workshop = round(cs->workshop * percent / 100);
+			cout << endl << "ID: " << cs->ID << " - ";
+			cs->OutputWorkshopStatus();
 		}
 		break;
 	case 2:
@@ -131,24 +126,25 @@ void EditStations(vector<Station*>& edit_stations)
 
 ofstream& operator << (ofstream& fout, const Station& station)
 {
-	fout << station.title << endl
+	fout << station.ID << endl
+		<< station.title << endl
 		<< station.workshop << endl
 		<< station.active_workshop << endl
-		<< station.efficiency << endl
-		<< station.ID << endl;
-	cout << "Данные станции сохранены в файл." << endl;
+		<< station.efficiency << endl;
+	//cout << "Данные станции сохранены в файл." << endl;
 	return fout;
 }
 
 
 ifstream& operator >> (ifstream& fin, Station& station)
 {
+	fin >> station.ID;
 	fin.ignore();
 	getline(fin, station.title);
 	fin >> station.workshop;
 	fin >> station.active_workshop;
 	fin >> station.efficiency;
-	fin >> station.ID;
-	cout << "Данные станции загружены из файла." << endl;
+	station.max_id_s = station.ID;
+	//cout << "Данные станции загружены из файла." << endl;
 	return fin;
 }
