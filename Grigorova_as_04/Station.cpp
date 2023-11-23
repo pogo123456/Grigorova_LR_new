@@ -1,7 +1,6 @@
 #include "Station.h"
 #include "Header.h"
 
-
 int Station::max_id_s = 0;
 
 void Station::OutputWorkshopStatus() const
@@ -91,35 +90,6 @@ void EditStation(Station& edit_station)
 		break;
 	default:
 		cout << "Ошибка! Введите корректные данные:  ";
-		break;
-	}
-}
-
-
-void EditStations(vector<Station*>& edit_stations)
-{
-	cout << endl << "Хотите изменить кол-во работающих цехов?" << endl;
-	cout << "1. Да" << endl << "2. Нет" << endl << "Ваш выбор: ";
-	int choice = 0;
-	GetCorrectNumber(choice);
-	switch (choice)
-	{
-	case 1:
-		cout << "Введите новый процент активных цехов (0-100): ";
-		float percent;
-		GetCorrectNumber(percent);
-
-		for (auto& cs : edit_stations)
-		{
-			cs->active_workshop = round(cs->workshop * percent / 100);
-			cout << endl << "ID: " << cs->ID << " - ";
-			cs->OutputWorkshopStatus();
-		}
-		break;
-	case 2:
-		return;
-	default:
-		cout << "Ошибка! Введите корректные данные:  " << endl;
 		break;
 	}
 }

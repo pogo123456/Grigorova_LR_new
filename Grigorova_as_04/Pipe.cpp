@@ -76,34 +76,6 @@ void EditPipe(Pipe& edit_pipe)
 	
 }
 
-void EditPipes(vector <Pipe*>& edit_pipes)
-{
-	cout << endl << "Хотите изменить статус трубы?" << endl;
-	cout << "1. Да" << endl << "2. Нет" << endl << "Ваш выбор:  ";
-	int choice = 0;
-	GetCorrectNumber(choice);
-	switch (choice)
-	{
-	case 1:
-		bool inrepaire;
-		cout << "Новый статус (1 - В ремонте, 0 - Работает):  ";
-		GetCorrectNumber(inrepaire);
-
-		for (auto& pipe : edit_pipes)
-		{
-			pipe->inrepair = inrepaire;
-			cout << endl << "ID: " << pipe->ID << " - ";
-			pipe->OutputPipeStatus();
-		}
-		break;
-	case 2:
-		return;
-	default:
-		cout << "Ошибка! Введите корректные данные:  " << endl;
-		break;
-	}
-}
-
 void Pipe::OutputPipeStatus()
 {
 	cout << (inrepair ? "Труба в ремонте." : "Труба работает.") << endl;

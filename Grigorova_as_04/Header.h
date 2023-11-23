@@ -32,18 +32,3 @@ T& SelectElement(unordered_map <int, T>& elements)
 	}
 	return elements[ID];
 }
-
-template <typename K>
-unordered_map<int, K> removeKey(std::unordered_map<int, K>& notes, int key) {
-	if (notes.find(key) != notes.end()) {
-		notes.erase(key);
-		cout << "Removal was succesful!" << endl;
-		return notes;
-	}
-	else {
-		cout << "Key " << key << " does not exist!\nPlease enter a valid key: ";
-		int newKey;
-		cin >> newKey;
-		return removeKeyIfExists(notes, newKey);
-	}
-}
