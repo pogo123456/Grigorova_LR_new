@@ -24,6 +24,12 @@ istream& operator >> (istream& in, Pipe& new_pipe)
 	GetCorrectNumber(new_pipe.len);
 	cout << "¬ведите диаметр трубы (мм):  ";
 	GetCorrectNumber(new_pipe.diam);
+	while (new_pipe.diam != 500 && new_pipe.diam != 700 && new_pipe.diam != 1000 && new_pipe.diam != 1400)
+	{
+		cout << "ќшибка! ¬ведите корректные данные:  ";
+		GetCorrectNumber(new_pipe.diam);
+
+	}
 	cout << "—осто€ние трубы (1 - в ремонте; 0 - работает):  ";
 	GetCorrectNumber(new_pipe.inrepair);
 	new_pipe.OutputPipeStatus();

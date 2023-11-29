@@ -8,6 +8,8 @@
 
 using namespace std;
 
+int wokrWithGraph::Graph::max_idg = 0;
+
 void wokrWithGraph::EditPipes(vector<Pipe*>& edit_pipes)
 {
 	cout << endl << "Хотите изменить статус трубы?" << endl;
