@@ -23,6 +23,16 @@ string Station::GetName() const
 	return title;
 }
 
+int Station::GetWorkshops() const
+{
+	return workshop;
+}
+
+int Station::GetActWorkshops() const
+{
+	return active_workshop;
+}
+
 istream& operator >> (istream& in, Station& new_station)
 {
 	new_station.ID = ++new_station.max_id_s;

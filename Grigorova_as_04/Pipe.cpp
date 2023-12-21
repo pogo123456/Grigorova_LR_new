@@ -3,16 +3,6 @@
 
 int Pipe::max_id_p = 0;
 
-string Pipe::GetName() const
-{
-	return km_mark;
-}
-
-int Pipe::GetId()
-{
-	return ID;
-}
-
 istream& operator >> (istream& in, Pipe& new_pipe)
 {
 	new_pipe.ID = ++new_pipe.max_id_p;
@@ -23,13 +13,7 @@ istream& operator >> (istream& in, Pipe& new_pipe)
 	cout << "¬ведите длину трубы (км):  ";
 	GetCorrectNumber(new_pipe.len);
 	cout << "¬ведите диаметр трубы (мм):  ";
-	GetCorrectNumber(new_pipe.diam);
-	while (new_pipe.diam != 500 && new_pipe.diam != 700 && new_pipe.diam != 1000 && new_pipe.diam != 1400)
-	{
-		cout << "ќшибка! ¬ведите корректные данные:  ";
-		GetCorrectNumber(new_pipe.diam);
-
-	}
+	new_pipe.diam = GetCorrectDiam(500, 1400);
 	cout << "—осто€ние трубы (1 - в ремонте; 0 - работает):  ";
 	GetCorrectNumber(new_pipe.inrepair);
 	new_pipe.OutputPipeStatus();
@@ -90,6 +74,43 @@ void Pipe::OutputPipeStatus()
 bool Pipe::GetStatus()
 {
 	return inrepair;
+}
+
+int Pipe::GetDia()
+{
+	return diam;
+}
+
+int Pipe::GetLen()
+{
+	return len;
+}
+
+string Pipe::GetName() const
+{
+	return km_mark;
+}
+
+int Pipe::GetId()
+{
+	return ID;
+}
+
+bool Pipe::ConnectionNotBusy() const
+{
+	return CSid1 < 1 || CSid2 < 1;
+}
+
+void Pipe::Connect(const int& id1, const int& id2)
+{
+	CSid1 = id1;
+	CSid2 = id2;
+}
+
+void Pipe::DeleteConnection()
+{
+	CSid1 = 0;
+	CSid2 = 0;
 }
 
 ofstream& operator << (ofstream& fout, const Pipe& pipe)

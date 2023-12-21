@@ -1,8 +1,8 @@
 #pragma once
 #include <iostream>
-using namespace std;
 #include <unordered_map>
 
+using namespace std;
 
 template <typename T>
 void GetCorrectNumber(T& var)
@@ -15,6 +15,21 @@ void GetCorrectNumber(T& var)
 		cout << "Некорректно введенные данные! Попробуйте снова:  ";
 		cin >> var;
 	}
+}
+
+template <typename T>
+int GetCorrectDiam(T min, T max)
+{
+	T var;
+	cin >> var;
+	while (var != 500 && var != 700 && var != 1000 && var != 1400)
+	{
+		cin.clear();
+		cin.ignore(1000, '\n');
+		cout << "Некорректно введенные данные! Попробуйте снова:  ";
+		cin >> var;
+	}
+	return var;
 }
 
 template <typename T>

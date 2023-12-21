@@ -19,11 +19,13 @@ public:
 	friend istream& operator >> (istream& in, Station& station);
 	friend ostream& operator << (ostream& out, const Station& station);
 	friend void EditStation(Station& edit_station);
-	
 	friend ofstream& operator << (ofstream& fout, const Station& station);
 	friend ifstream& operator >> (ifstream& fin, Station& Station);
+	
 	void OutputWorkshopStatus() const;
 	double GetPercentOfActiveWorkshops() const;
 	int GetId();
 	string GetName() const;
+	int GetWorkshops() const;
+	int GetActWorkshops() const;
 };

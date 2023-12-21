@@ -135,7 +135,6 @@
   <ItemGroup>
     <ClInclude Include="Graph.h" />
     <ClInclude Include="Header.h" />
-    <ClInclude Include="Header1.h" />
     <ClInclude Include="logger.h" />
     <ClInclude Include="Pipe.h" />
     <ClInclude Include="Station.h" />
